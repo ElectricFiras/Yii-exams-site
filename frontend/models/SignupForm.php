@@ -9,9 +9,15 @@ use common\models\User;
  */
 class SignupForm extends Model
 {
+    public $firstname;
+    public $lastname;
     public $username;
     public $email;
+    public $phone;
+    public $age;
+    public $gender;
     public $password;
+    public $verifyCode;
 
 
     /**
@@ -20,6 +26,16 @@ class SignupForm extends Model
     public function rules()
     {
         return [
+            ['firstname', 'trim'],
+            ['firstname', 'required', 'message' => 'Your first name is reuired, you do have one, right?'],
+            ['firstname', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'only Alphabets allowd'],
+            ['firstname', 'string', 'min' => 2, 'max' => 255],
+            
+            ['lastname', 'trim'],
+            ['lastname', 'required', 'message' => 'Your last name is reuired, you do have one, right?'],
+            ['lastname', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'only Alphabets allowd'],
+            ['lastname', 'string', 'min' => 2, 'max' => 255],
+            
             ['username', 'trim'],
             ['username', 'required'],
             ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
@@ -31,8 +47,21 @@ class SignupForm extends Model
             ['email', 'string', 'max' => 255],
             ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
 
+            ['phone', 'trim'],
+            ['phone', 'required'],
+            ['phone', 'integer', 'message' => 'Please enter a valid phone number'],
+            ['phone', 'string', 'min' => 10, 'max' => 14],
+            
+            ['age', 'trim'],
+            ['age', 'required'],
+            ['age', 'integer', 'message' => 'Please enter a valid age'],
+            ['age', 'string', 'min' => 2, 'max' => 2],
+            
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
+            
+            ['verifyCode', 'captcha'],
+            ['verifyCode', 'required']
         ];
     }
 
