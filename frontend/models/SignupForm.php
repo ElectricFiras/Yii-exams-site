@@ -60,6 +60,8 @@ class SignupForm extends Model
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
             
+            ['gender', 'required'],
+            
             ['verifyCode', 'captcha'],
             ['verifyCode', 'required']
         ];
@@ -77,8 +79,13 @@ class SignupForm extends Model
         }
         
         $user = new User();
+        $user->first_name = $this->firstname;
+        $user->last_name = $this->lastname;
         $user->username = $this->username;
         $user->email = $this->email;
+        $user->phone = $this->phone;
+        $user->age = $this->age;
+        $user->gender = $this->gender;
         $user->setPassword($this->password);
         $user->generateAuthKey();
         
