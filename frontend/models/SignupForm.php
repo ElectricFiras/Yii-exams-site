@@ -51,6 +51,7 @@ class SignupForm extends Model
             ['phone', 'required'],
             ['phone', 'integer', 'message' => 'Please enter a valid phone number'],
             ['phone', 'string', 'min' => 10, 'max' => 14],
+            ['phone', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This phone has already been taken.'],
             
             ['age', 'trim'],
             ['age', 'required'],

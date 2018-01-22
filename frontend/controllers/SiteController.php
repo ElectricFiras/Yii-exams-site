@@ -8,6 +8,8 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use common\models\UsersSessions;
+use common\models\User;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
@@ -83,7 +85,9 @@ class SiteController extends Controller {
         }
 
         $model = new LoginForm();
+        $session = new UsersSessions();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            $session->start($model->username);
             return $this->goBack();
         } else {
             return $this->render('login', [
@@ -98,6 +102,8 @@ class SiteController extends Controller {
      * @return mixed
      */
     public function actionLogout() {
+        $session = new UsersSessions();
+        $session->end();
         Yii::$app->user->logout();
 
         return $this->goHome();
@@ -141,9 +147,11 @@ class SiteController extends Controller {
      */
     public function actionSignup() {
         $model = new SignupForm();
+        $session = new UsersSessions();
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->signup()) {
                 if (Yii::$app->getUser()->login($user)) {
+                    $session->start($user->username);
                     return $this->goHome();
                 }
             }
