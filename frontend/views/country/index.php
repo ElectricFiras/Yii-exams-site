@@ -18,14 +18,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Create Country', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-    
-    <?= print_r(Yii::$app->user); ?>
-    <br>
-    ====================================================
-    <br>
-    <?= print_r(Yii::$app->request) ?>
-    <br>
-    ====================================================
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
