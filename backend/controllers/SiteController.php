@@ -5,7 +5,10 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\helpers\Json;
 use common\models\LoginForm;
+use backend\models\ExamForm;
+use common\models\Exams;
 
 /**
  * Site controller
@@ -26,7 +29,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout', 'index', 'exam', 'exam-confirm'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -94,5 +97,29 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+    
+    public function actionExam() {
+        $model = new ExamForm();
+        $save = new Exams();
+        if ($model->load(Yii::$app->request->post())){
+            $exam = [];
+            foreach ($model->attributes as $key => $test){
+                if ($key == 'title'){
+                    $exam[$key] = $test;
+                }elseif (substr($key, 0, -1) == 'question'){
+                    $exam['exam'][$key]['text'] = $test;
+                }elseif (substr($key, 0, -1) == 'answer'){
+                    $index = (int)substr($key, -1);
+                    $exam['exam']['question' . ceil($index/4)]['answers'][$key] = $test;
+                }
+                $save->user_id = Yii::$app->user->identity['id'];
+                $save->exam = Json::encode($exam);
+                $save->save();
+            }
+            return $this->render('exam-confirm',['model' => $model]);
+        } else {
+            return $this->render('exam',['model' => $model]);
+        }
     }
 }

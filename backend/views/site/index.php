@@ -18,3 +18,7 @@ $regestired = User::findAll(['isadmin' => null]);
 <div>
     Registered Users: <?= count($regestired) ?>
 </div>
+
+<div>
+    Percentage: <?= (count($activeUsers)/count($regestired))*100 ?>%
+</div>
