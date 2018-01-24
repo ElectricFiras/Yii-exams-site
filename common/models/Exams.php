@@ -15,6 +15,8 @@ use Yii;
  */
 class Exams extends \yii\db\ActiveRecord
 {
+    
+    public $answers = [];
     /**
      * @inheritdoc
      */

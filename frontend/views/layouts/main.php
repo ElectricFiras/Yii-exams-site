@@ -46,6 +46,7 @@ AppAsset::register($this);
     } else {
         $menuItems = [
             ['label' => 'Home', 'url' => ['/country/index']],
+            ['label' => 'Exams', 'url' => ['/exam/index']],
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
             ];

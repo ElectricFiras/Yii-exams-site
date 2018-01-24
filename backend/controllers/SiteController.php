@@ -99,27 +99,51 @@ class SiteController extends Controller
         return $this->goHome();
     }
     
-    public function actionExam() {
+    public function actionExam($many = null) {
         $model = new ExamForm();
-        $save = new Exams();
-        if ($model->load(Yii::$app->request->post())){
-            $exam = [];
-            foreach ($model->attributes as $key => $test){
-                if ($key == 'title'){
-                    $exam[$key] = $test;
-                }elseif (substr($key, 0, -1) == 'question'){
-                    $exam['exam'][$key]['text'] = $test;
-                }elseif (substr($key, 0, -1) == 'answer'){
-                    $index = (int)substr($key, -1);
-                    $exam['exam']['question' . ceil($index/4)]['answers'][$key] = $test;
-                }
-                $save->user_id = Yii::$app->user->identity['id'];
-                $save->exam = Json::encode($exam);
-                $save->save();
+        if (!isset($many)){
+            if ($model->load(Yii::$app->request->post())){
+                $this->saveExam($this->createExam($model));
+                return $this->render('exam-confirm',['model' => $model]);
+            } else {
+                return $this->render('exam',['model' => $model]);
             }
-            return $this->render('exam-confirm',['model' => $model]);
         } else {
-            return $this->render('exam',['model' => $model]);
+            return $this->render('exam', ['model' => $model, 'many' => $many]);
         }
+    }
+    
+    public function createExam ($model) {
+        $exam = []; $i=1; $a=1;
+        foreach ($model->attributes as $key => $test){
+            switch ($key) {
+                case "title":
+                    $exam[$key] = $test;
+                    break;
+                case "questions":
+                    foreach($test as $ques){
+                        $exam['exam']['question' . $i]['text'] = $ques;
+                        $i++;
+                    }
+                    break;
+                case "answers":
+                    foreach($test as $ans){
+                        if ($ans != rtrim($ans, "*")){
+                            $exam['exam']['question' . ceil($a/4)]['right'] = rtrim($ans, "*");
+                        }
+                        $exam['exam']['question' . ceil($a/4)]['answers']['answer' . $a] = rtrim($ans, "*");
+                        $a++;
+                    }
+                    break;    
+            }
+        }
+        return $exam;
+    }
+    
+    public function saveExam ($exam) {
+        $save = new Exams();
+        $save->user_id = Yii::$app->user->identity['id'];
+        $save->exam = Json::encode($exam);
+        $save->save() or die($save->getErrors());
     }
 }
