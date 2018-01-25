@@ -129,7 +129,7 @@ class SiteController extends Controller
                 case "answers":
                     foreach($test as $ans){
                         if ($ans != rtrim($ans, "*")){
-                            $exam['exam']['question' . ceil($a/4)]['right'] = rtrim($ans, "*");
+                            $exam['exam']['question' . ceil($a/4)]['right'] = 'answer' . $a;
                         }
                         $exam['exam']['question' . ceil($a/4)]['answers']['answer' . $a] = rtrim($ans, "*");
                         $a++;

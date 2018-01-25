@@ -47,6 +47,7 @@ class Exams extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'User ID',
             'exam' => 'Exam',
+            'answers' => 'Answers',
         ];
     }
 
