@@ -31,8 +31,8 @@ class UserExam extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'exam_id'], 'required'],
-            [['user_id', 'exam_id', 'mark', 'end'], 'integer'],
-            [['answers'], 'string'],
+            [['user_id', 'exam_id', 'end', 'failed'], 'integer'],
+            [[ 'mark','answers'], 'string'],
         ];
     }
 
@@ -48,6 +48,7 @@ class UserExam extends \yii\db\ActiveRecord
             'answers' => 'Answers',
             'mark' => 'Mark',
             'end' => 'End',
+            'failed' => 'Failed',
         ];
     }
 }

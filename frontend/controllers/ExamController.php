@@ -15,7 +15,8 @@ class ExamController extends \yii\web\Controller
     public function actionIndex()
     {
         $exams = Exams::find();
-        return $this->render('index', ['exams' => $exams]);
+        $taken = UserExam::findAll(['user_id' => Yii::$app->user->getId()]);
+        return $this->render('index', ['exams' => $exams, 'taken' => $taken]);
     }
     
     public function actionExam($id) {
@@ -37,13 +38,16 @@ class ExamController extends \yii\web\Controller
         $formate = new Formatter();
         $model->end = (int)$formate->asTimestamp(date("Y-m-d H:i:s"));
         $mark = 0;
+        $questions = 0;
         $teest = Json::decode($exam->getAttribute('exam'));
         foreach($model->getAttribute('answers') as $key => $test){
             if ($teest['exam']['question' . $key]['right'] == $test){
                 $mark++;
             }
+            $questions++;
         }
-        $model->mark = $mark;
+        $model->mark = $mark . '/' .$questions;
+        $mark/$questions < 0.5 ? $model->failed = 1 : $model->failed = 0;
         $model->answers = Json::encode($model->answers);
         $model->save();
         return $mark;
