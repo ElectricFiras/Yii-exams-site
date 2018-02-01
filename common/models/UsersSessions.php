@@ -80,7 +80,7 @@ class UsersSessions extends \yii\db\ActiveRecord
      */
     public function end(){        
         $formate = new Formatter();
-        $session = UsersSessions::findOne(['id' => Yii::$app->session->id]);
+        $session = UsersSessions::findOne(['user_id' => Yii::$app->user->getId(), 'end' => 0]);
         $session->end = (int)$formate->asTimestamp(date("Y-m-d H:i:s"));
         $session->save();
     }

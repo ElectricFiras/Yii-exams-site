@@ -16,8 +16,12 @@ use yii\widgets\ActiveForm;
 $test = Json::decode($exam->getAttribute('exam'));
 $x = 1;
 
+$this->title = 'Take Exam';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="frontend-views-exam-exam">
+    <h1><?= Html::encode($this->title) ?></h1>
+
     
     <?php $form = ActiveForm::begin(); ?>
     <?php foreach ($test['exam'] as $question) {?>

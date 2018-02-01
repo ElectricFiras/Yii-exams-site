@@ -2,14 +2,16 @@
 /* @var $this yii\web\View */
 
 use yii\helpers\Json;
+use yii\helpers\Html;
 $exams_id = [];
 
 foreach ($taken as $took) {
     $exams_id[$took->getAttribute('exam_id')] = $took->getAttribute('mark');
 }
-
+$this->title = 'Exams';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<h1>exam/index</h1>
+    <h1><?= Html::encode($this->title) ?></h1>
 
 <p>
     You may change the content of this page by modifying

@@ -9,6 +9,7 @@ use yii\helpers\Json;
 use common\models\LoginForm;
 use backend\models\ExamForm;
 use common\models\Exams;
+use frontend\models\UserExam;
 
 /**
  * Site controller
@@ -29,7 +30,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'exam', 'exam-confirm'],
+                        'actions' => ['logout', 'index', 'exam', 'exam-confirm', 'exams', 'edit', 'save', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -81,6 +82,7 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->login('back') && Yii::$app->user->identity->isadmin) {
             return $this->goBack();
         } else {
+            Yii::$app->session->setFlash('error', 'You are not Admin');
             return $this->render('login', [
                 'model' => $model,
             ]);
@@ -100,13 +102,15 @@ class SiteController extends Controller
     }
     
     public function actionExam($many = null) {
+        /* routing to the exam view and If $many is set it will show the text fields */
         $model = new ExamForm();
+        $exams = Exams::find()->all();
         if (!isset($many)){
             if ($model->load(Yii::$app->request->post())){
                 $this->saveExam($this->createExam($model));
                 return $this->render('exam-confirm',['model' => $model]);
             } else {
-                return $this->render('exam',['model' => $model]);
+                return $this->render('exam',['model' => $model, 'exams' => $exams]);
             }
         } else {
             return $this->render('exam', ['model' => $model, 'many' => $many]);
@@ -114,6 +118,7 @@ class SiteController extends Controller
     }
     
     public function createExam ($model) {
+        /*Polishing the exam object to be saved to the database as a JSON string*/
         $exam = []; $i=1; $a=1;
         foreach ($model->attributes as $key => $test){
             switch ($key) {
@@ -140,10 +145,41 @@ class SiteController extends Controller
         return $exam;
     }
     
-    public function saveExam ($exam) {
-        $save = new Exams();
-        $save->user_id = Yii::$app->user->identity['id'];
+    public function saveExam ($exam, $id = null) {
+        /*Taking the exam final form and saving it to the database*/
+        if (isset($id)) {
+            $save = Exams::findOne(['id' => $id]);
+        } else {
+            $save = new Exams();
+            $save->user_id = Yii::$app->user->identity['id'];
+        }
         $save->exam = Json::encode($exam);
+//        var_dump($save->exam);
+//            die;
         $save->save() or die($save->getErrors());
+    }
+    
+    public function actionEdit($id) {
+        /*If an exam is selected insted of a number of question it will rout to the edit page*/
+        $model = new ExamForm();
+        $exam = Exams::findOne(['id' => $id]);
+         if ($model->load(Yii::$app->request->post())){
+                $this->saveExam($this->createExam($model), $id);
+                return $this->render('exam-confirm');
+        } else {
+            return $this->render('edit', ['exam' => $exam, 'id' => $id, 'model' => $model]);
+        }
+    }
+    
+    public function actionDelete($id) {
+        /*Delete the exam and its results from the databases*/
+        $exam = Exams::findOne(['id' => $id]);
+        $exam->delete();
+        $exam = UserExam::findAll(['exam_id' => $id]);
+        foreach($exam as $del) {
+            $del->delete();
+        }
+        
+        return $this->render('exam-confirm');
     }
 }

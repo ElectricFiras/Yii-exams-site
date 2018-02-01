@@ -2,5 +2,5 @@
 use yii\helpers\Html;
 ?>
 <h1>
-    thank You
+    Thank You
 </h1>

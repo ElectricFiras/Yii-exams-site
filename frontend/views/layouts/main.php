@@ -28,25 +28,38 @@ AppAsset::register($this);
 
 <div class="wrap">
     <?php
-    NavBar::begin([
+//    NavBar::begin([
+//        'brandLabel' => Yii::$app->name,
+//        'brandUrl' => Yii::$app->homeUrl,
+//        'options' => [
+//            'class' => 'navbar-inverse navbar-fixed-top',
+//        ],
+//    ]);
+    if (Yii::$app->user->isGuest) {
+         NavBar::begin([
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    if (Yii::$app->user->isGuest) {
         $menuItems = [
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
             ['label' => 'Signup', 'url' => ['/site/signup']],
             ['label' => 'Login', 'url' => ['/site/login']],
+            ['label' => 'Admin', 'url' => ['/site/admin']],
         ];
     } else {
+         NavBar::begin([
+        'brandLabel' => Yii::$app->name,
+        'brandUrl' => 'http://exam.yii/index.php?r=exam%2Findex',
+        'options' => [
+            'class' => 'navbar-inverse navbar-fixed-top',
+        ],
+    ]);
         $menuItems = [
-            ['label' => 'Home', 'url' => ['/country/index']],
-            ['label' => 'Exams', 'url' => ['/exam/index']],
+            ['label' => 'Home', 'url' => ['/exam/index']],
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
             ];
