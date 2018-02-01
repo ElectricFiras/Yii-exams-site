@@ -6,7 +6,7 @@ use yii\helpers\Json;
 
 $data = Json::decode($exam['exam'])['exam'];
 $many = count($data);
-$this->title = 'Take Exam';
+$this->title = 'Edit';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= Html::encode($this->title) ?></h1>

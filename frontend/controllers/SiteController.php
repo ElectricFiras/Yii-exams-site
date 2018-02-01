@@ -129,7 +129,7 @@ class SiteController extends Controller {
             if ($user = $model->signup()) {
                 if (Yii::$app->getUser()->login($user)) {
                     $session->start($user->username);
-                    return $this->goHome();
+                    return $this->goback('http://exam.yii/index.php?r=exam%2Findex');
                 }
             }
         }

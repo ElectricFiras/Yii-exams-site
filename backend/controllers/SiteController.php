@@ -10,6 +10,7 @@ use common\models\LoginForm;
 use backend\models\ExamForm;
 use common\models\Exams;
 use frontend\models\UserExam;
+use yii\data\Pagination;
 
 /**
  * Site controller
@@ -30,7 +31,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'exam', 'exam-confirm', 'exams', 'edit', 'save', 'delete'],
+                        'actions' => ['logout', 'index', 'exam', 'exam-confirm', 'exams', 'edit', 'save', 'delete', 'users', 'user'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -181,5 +182,20 @@ class SiteController extends Controller
         }
         
         return $this->render('exam-confirm');
+    }
+    
+    public function actionUsers(){
+        $users = \common\models\User::find();
+        $count = clone $users;
+        $pages = new Pagination(['totalCount' => $count->count(), 'pageSizeLimit' => [1,2]]);
+        $models = $users->offset($pages->offset)
+        ->limit($pages->limit)
+        ->all();
+        return $this->render('users', ['models' => $models, 'pages' => $pages]);
+    }
+    
+    public function actionUser($id){
+        $user = \common\models\User::findOne(['id' => $id]);
+        return $this->render('user', ['user' => $user]);
     }
 }
